@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع وتطبيق شباب اسنا 2000</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --gold: #c5a059; 
+            --gold-dark: #a68549;
+            --gold-glow: rgba(197, 160, 89, 0.4);
+            --bg-creamy: #fdfaf5; 
+            --text-dark: #1a1a1a; 
+            --whatsapp: #25D366; 
+            --phone: #28a745; 
+        }
+
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
+        body { background: var(--bg-creamy); margin: 0; padding-bottom: 110px; color: var(--text-dark); text-align: right; overflow-x: hidden; }
+
+        /* شاشة التحميل */
+        #splash { 
+            position: fixed; inset: 0; background: var(--bg-creamy); 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; 
+        }
+        .loader-icon { 
+            font-size: 45px; color: var(--gold); font-family: 'Amiri', serif; 
+            animation: pulseGlow 1.5s infinite ease-in-out; 
+            text-shadow: 0 0 15px var(--gold-glow);
+        }
+        .line-loader { width: 150px; height: 4px; background: #eee; border-radius: 10px; overflow: hidden; margin-top: 20px; position: relative; }
+        .line-loader::after { content: ''; position: absolute; height: 4px; width: 50%; background: var(--gold); animation: load 1s infinite linear; left: -50%; }
+        @keyframes load { 0% { left: -50%; } 100% { left: 100%; } }
+        @keyframes pulseGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); text-shadow: 0 0 25px var(--gold); } }
+
+        /* الهيدر */
+        header { 
+            background: #fff; padding: 50px 20px 80px; text-align: center; 
+            border-bottom: 3px solid var(--gold); position: relative; 
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        header h1 { font-family: 'Amiri', serif; font-size: 38px; color: var(--gold); margin: 0; }
+        header p { margin: 5px 0 0; font-size: 13px; font-weight: bold; color: #888; }
+
+        .top-btn { position: absolute; top: 25px; width: 45px; height: 45px; background: #fff; border: 1px solid var(--gold); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; }
+        .btn-right { right: 15px; } .btn-left { left: 15px; }
+        .btn-label { position: absolute; top: 50px; font-size: 10px; color: var(--gold); font-weight: bold; white-space: nowrap; }
+
+        /* البحث */
+        .search-area { margin: -35px auto 25px; width: 90%; max-width: 500px; position: relative; z-index: 100; }
+        #searchInput { width: 100%; padding: 18px; border-radius: 18px; border: 2px solid var(--gold); background: #fff; text-align: center; font-size: 16px; outline: none; box-shadow: 0 10px 25px rgba(197, 160, 89, 0.15); }
+
+        /* الكروت القائمة */
+        .container { padding: 15px; max-width: 600px; margin: auto; }
+        .card { 
+            background: #fff; 
+            padding: 18px 25px; 
+            border-radius: 20px; 
+            margin-bottom: 12px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            cursor: pointer; 
+            border: 1px solid rgba(197, 160, 89, 0.1);
+            gap: 10px; /* مسافة بين النص والزرار */
+        }
+        .card:hover { transform: translateY(-3px); border-color: var(--gold); box-shadow: 0 8px 20px var(--gold-glow); }
+        
+        .card-info { flex: 1; min-width: 0; } /* تسمح للنص بالتقلص ولا يزق الزرار */
+        .card-name { font-size: 18px; font-weight: 900; color: var(--text-dark); display: block; word-wrap: break-word; }
+        .card-job { color: var(--gold); font-size: 13px; font-weight: bold; display: block; }
+
+        .details-btn { 
+            color: var(--gold) !important; 
+            font-weight: bold; 
+            font-size: 12px; 
+            background: var(--bg-creamy); 
+            padding: 5px 12px; 
+            border-radius: 10px; 
+            white-space: nowrap; 
+            display: flex; 
+            align-items: center;
+            border: 1px solid transparent;
+        }
+
+        /* المودالات */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.7); 
+            backdrop-filter: blur(8px); 
+            z-index: 5000; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 15px;
+            perspective: 1000px; 
+        }
+
+        .modal-content { 
+            background: #fff; 
+            padding: 20px;
+            border-radius: 25px; 
+            border: 2px solid var(--gold); 
+            width: 85%;
+            max-width: 320px;
+            text-align: center; 
+            position: relative; 
+            max-height: 85vh; 
+            overflow-y: auto; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            animation: fancyShow 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        #jobsModal .modal-content {
+            width: 95%; 
+            max-width: 380px;
+        }
+
+        .whats-new-box { 
+            background: #fff9eb; border: 1px dashed var(--gold); padding: 15px; 
+            border-radius: 15px; margin: 15px 0; text-align: center; 
+            line-height: 1.8; font-size: 14px; white-space: pre-line; color: #444;
+        }
+
+        @keyframes fancyShow {
+            0% { opacity: 0; transform: scale(0.8) translateY(50px) rotateX(-20deg); }
+            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); }
+        }
+
+        /* تنسيق الوظائف */
+        .job-card { background: #fffaf0; padding: 18px; border-radius: 18px; margin-bottom: 15px; border-right: 5px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: right; overflow: hidden; position: relative; }
+        .job-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 5px; }
+
+        .job-call-btn {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: white !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 11px;
+            box-shadow: 0 3px 8px var(--gold-glow);
+            border: 1px solid #fff;
+            animation: pulseButton 2s infinite;
+            line-height: 1;
+            height: 28px;
+        }
+
+        @keyframes pulseButton {
+            0% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.6); }
+            70% { box-shadow: 0 0 0 6px rgba(197, 160, 89, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
+        }
+
+        /* تفاصيل الكرت الشخصي */
+        .modal-profile-img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--gold); margin-bottom: 10px; object-fit: cover; }
+        .m-row { display: flex; align-items: center; padding: 6px 0; border-bottom: 1px solid #f5f5f5; text-align: right; }
+        .m-label { color: var(--gold); font-size: 12px; font-weight: bold; min-width: 80px; }
+        .m-value { color: var(--text-dark); font-weight: 900; font-size: 14px; flex: 1; }
+        
+        .contact-actions { display: flex; justify-content: center; gap: 15px; margin: 15px 0; }
+        .icon-btn { width: 50px; height: 50px; border-radius: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .icon-btn img { width: 24px; height: 24px; }
+        .bg-phone { background: var(--phone); } .bg-whatsapp { background: var(--whatsapp); }
+        
+        .btn-main { background: var(--gold); color: white; border: none; padding: 12px; border-radius: 15px; width: 100%; font-weight: 900; cursor: pointer; font-size: 15px; margin-top: 8px; }
+        .footer-credits { position: fixed; bottom: 0; width: 100%; background: #fff; padding: 15px; text-align: center; border-top: 2px solid var(--gold); z-index: 1000; }
+        .footer-credits a { color: var(--gold); text-decoration: none; font-weight: 900; }
+
+        .limit-msg { color: #d9534f; font-size: 11px; font-weight: bold; display: block; width: 100%; text-align: center; margin-top: 5px;}
+        .attempts-count { color: #666; font-size: 10px; background: #f0f0f0; padding: 3px 10px; border-radius: 6px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="splash">
+    <div class="loader-icon">شبابنا ٢٠٠٠</div>
+    <div style="color:var(--gold); font-weight:bold; margin-top:15px;">جاري التحميل</div>
+    <div class="line-loader"></div>
+    <div id="thanks-section" style="position:absolute; bottom:30px; text-align:center; font-size:11px; color:var(--gold); font-weight:900; line-height:1.6;">
+        شكراً HA TM & Youssef mahmoud<br>
+        Mohamed Khaled & Ziad momen
+    </div>
+</div>
+
+<header>
+    <div class="top-btn btn-right" onclick="openSugg()">
+        <img src="https://img.icons8.com/material-rounded/24/c5a059/idea.png">
+        <span class="btn-label">مقترحات</span>
+    </div>
+    <h1>شبابنا ٢٠٠٠</h1>
+    <p>دليل الخدمات المهنية لشباب مركز بإسنا</p>
+    <div class="top-btn btn-left" onclick="openJobs()">
+        <img src="https://img.icons8.com/material-rounded/24/c5a059/briefcase.png">
+        <span class="btn-label">وظائف</span>
+    </div>
+</header>
+
+<div id="updateModal" class="modal">
+    <div class="modal-content">
+        <h3 style="color:var(--gold); margin:0; font-family:'Amiri'; font-size:22px;">ما الجديد في أبلكيشن شبابنا 2000؟</h3>
+        <div id="updateText" class="whats-new-box"></div>
+        <button class="btn-main" onclick="closeUpdate()" style="width: auto; padding: 8px 35px; margin: 5px auto; font-size:14px;">موافق</button>
+    </div>
+</div>
+
+<div class="search-area">
+    <input type="text" id="searchInput" placeholder="ابحث بالاسم أو المهنة..." onkeyup="filter()">
+</div>
+
+<div class="container" id="list"></div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div id="m_img_container"></div>
+        <h2 id="m_name" style="margin:0 0 10px 0; color:var(--gold); font-family:'Amiri'; font-size: 24px;"></h2>
+        <div id="m_details"></div>
+        <div class="contact-actions">
+            <a id="m_call" href="#" class="icon-btn bg-phone"><img src="https://img.icons8.com/material-rounded/24/ffffff/phone.png"></a>
+            <a id="m_whatsapp" href="#" target="_blank" class="icon-btn bg-whatsapp"><img src="https://img.icons8.com/material-rounded/24/ffffff/whatsapp.png"></a>
+        </div>
+        <button class="btn-main" onclick="closeM()" style="background:#f5f5f5; color:#666; font-size: 14px; padding: 10px;">رجوع للقائمة</button>
+    </div>
+</div>
+
+<div id="jobsModal" class="modal">
+    <div class="modal-content">
+        <h3 style="color:var(--gold); margin:0 0 10px 0; font-size: 22px; font-family:'Amiri';">إعلانات الوظائف المتاحة 📢</h3>
+        <p style="font-size: 11px; color: #888; margin-bottom: 15px;">تغلق الوظيفة تلقائياً بعد اكتمال العدد لضمان المصداقية</p>
+        <div id="jobsList">جاري تحميل الوظائف...</div>
+        <button onclick="closeJobs()" class="btn-main" style="margin-top:15px; font-size:14px;">إغلاق</button>
+    </div>
+</div>
+
+<div id="suggModal" class="modal">
+    <div class="modal-content">
+        <h3 style="color:var(--gold); margin-bottom: 12px; font-size: 20px;">اقتراح تطوير 💡</h3>
+        <input type="text" id="suggName" style="width:100%; padding:10px; border-radius:12px; border:1px solid #ddd; margin-bottom:8px; outline:none; text-align:right;" placeholder="اسمك الكريم">
+        <textarea id="suggMsg" style="width:100%; padding:10px; border-radius:12px; border:1px solid #ddd; margin-bottom:8px; outline:none; text-align:right;" rows="3" placeholder="اكتب مقترحك هنا..."></textarea>
+        <button id="sendBtn" class="btn-main" onclick="sendSugg()" style="font-size:14px;">إرسال المقترح</button>
+        <button onclick="closeSugg()" style="background:none; border:none; color:#999; margin-top:10px; cursor:pointer; font-size:13px;">إلغاء</button>
+    </div>
+</div>
+
+<div class="footer-credits">
+    <a href="https://www.facebook.com/gnanootech" target="_blank">برمجة وتطوير GNANOO TECH</a>
+</div>
+
+<script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxfUwiM0-6M5fR3AfiBkeK6-mt7z4uaM3r0vRn_Rtr2QJ7k-5XVlty5zaIw-sLnxpIGKQ/exec";
+    const suggURL = "https://script.google.com/macros/s/AKfycbyA3nE7ohWXBbp1QXbQ-cjLyTTkeV2Lwupx_zGRXBQnmYui5Mr1OUrErfA2GW3E5ZM1/exec";
+    
+    let allData = [];
+    let allJobs = [];
+
+    async function loadData() {
+        try {
+            const response = await fetch(scriptURL + "?t=" + new Date().getTime());
+            const result = await response.json();
+            allData = result.data || [];
+            allJobs = result.jobs || [];
+            
+            allData.sort((a, b) => (a.Name || a['الاسم'] || "").toString().localeCompare((b.Name || b['الاسم'] || ""), 'ar'));
+            renderList(allData);
+
+            if (result.updates && result.updates.version !== localStorage.getItem('last_ver')) {
+                document.getElementById('updateText').innerText = result.updates.message;
+                document.getElementById('updateModal').style.display = 'flex';
+                localStorage.setItem('pending_ver', result.updates.version);
+            }
+
+            setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 2000);
+        } catch (e) { alert("خطأ في تحميل البيانات"); }
+    }
+
+    function renderList(techs) {
+        const list = document.getElementById('list');
+        list.innerHTML = '';
+        techs.forEach(p => {
+            const name = p.Name || p['الاسم'];
+            if(!name) return;
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.onclick = () => showDetails(p);
+            card.setAttribute('data-search', `${name} ${p.Job || p['المهنة']}`.toLowerCase());
+            
+            // التعديل هنا لضمان التناسق مع الأسماء الطويلة
+            card.innerHTML = `
+                <div class="card-info">
+                    <span class="card-name">${name}</span>
+                    <span class="card-job">${p.Job || p['المهنة'] || ''}</span>
+                </div>
+                <div class="details-btn">تفاصيل ◀</div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    function hasUserCalled(jobId) {
+        return JSON.parse(localStorage.getItem('user_call_history') || '[]').includes(jobId);
+    }
+
+    function handleJobClick(jobId, phone) {
+        if (hasUserCalled(jobId)) return alert("لقد قمت بالاتصال مسبقاً.");
+        let quotas = JSON.parse(localStorage.getItem('job_quotas') || '{}');
+        let count = (quotas[jobId] || 0) + 1;
+        if (count > 5) return alert("اكتمل العدد المطلوب.");
+        quotas[jobId] = count;
+        localStorage.setItem('job_quotas', JSON.stringify(quotas));
+        let history = JSON.parse(localStorage.getItem('user_call_history') || '[]');
+        history.push(jobId);
+        localStorage.setItem('user_call_history', JSON.stringify(history));
+        window.location.href = "tel:" + phone;
+        openJobs(); 
+    }
+
+    function openJobs() {
+        const container = document.getElementById('jobsList');
+        document.getElementById('jobsModal').style.display = 'flex';
+        if (allJobs.length > 0) {
+            container.innerHTML = allJobs.map((j, index) => {
+                let phone = (j['رقم التواصل'] || j.Phone || "").toString().trim();
+                let jobId = "job_" + (phone || index);
+                let count = JSON.parse(localStorage.getItem('job_quotas') || '{}')[jobId] || 0;
+                let isFull = count >= 5;
+                let userCalled = hasUserCalled(jobId);
+
+                return `
+                <div class="job-card" style="border-right-color: ${isFull ? '#ff4d4d' : 'var(--gold)'}">
+                    <b style="color:var(--gold); font-size:16px;">${j['الوظيفة'] || j.Job || "وظيفة شاغرة"}</b><br>
+                    <small>📍 المكان: ${j['المكان'] || j.Location || "إسنا"}</small><br>
+                    
+                    <div class="job-controls">
+                        ${isFull ? '<span class="limit-msg">❌ اكتمل العدد المطلوب</span>' : 
+                          `
+                          <a href="javascript:void(0)" onclick="handleJobClick('${jobId}', '${phone}')" class="job-call-btn">اتصل للتقديم</a>
+                          <div class="attempts-count">${userCalled ? '✅ تم الاتصال' : 'متبقي ' + (5-count) + ' أماكن'}</div>
+                          `
+                        }
+                    </div>
+                </div>`;
+            }).join('');
+        } else { container.innerHTML = "<p>لا توجد وظائف حالياً.</p>"; }
+    }
+
+    function showDetails(p) {
+        document.getElementById('m_img_container').innerHTML = `<img src="${p.Image || p['الصورة'] || 'https://img.icons8.com/fluency/96/user-male-circle.png'}" class="modal-profile-img">`;
+        document.getElementById('m_name').innerText = p.Name || p['الاسم'];
+        document.getElementById('m_details').innerHTML = `
+            <div class="m-row"><span class="m-label">اسم المحل:</span><span class="m-value">${p['اسم المحل'] || p['Store Name'] || 'عمل حر'}</span></div>
+            <div class="m-row"><span class="m-label">التخصص:</span><span class="m-value">${p.Job || p['المهنة'] || '—'}</span></div>
+            <div class="m-row"><span class="m-label">السن:</span><span class="m-value">${p.Age || p['السن'] || '—'} سنة</span></div>
+            <div class="m-row" style="border:none;"><span class="m-label">العنوان:</span><span class="m-value">${p.Address || p['العنوان'] || 'إسنا'}</span></div>
+        `;
+        let phone = (p.Phone || p['الموبايل'] || "").toString().trim();
+        document.getElementById('m_call').href = "tel:" + phone;
+        document.getElementById('m_whatsapp').href = "https://wa.me/20" + phone.replace(/^0/, '');
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function filter() {
+        let v = document.getElementById('searchInput').value.toLowerCase();
+        let cs = document.getElementsByClassName('card');
+        for(let c of cs) c.style.display = c.getAttribute('data-search').includes(v) ? "flex" : "none";
+    }
+
+    async function sendSugg() {
+        const name = document.getElementById('suggName').value;
+        const msg = document.getElementById('suggMsg').value;
+        if(!name || !msg) return alert("يرجى ملء جميع الخانات");
+        const btn = document.getElementById('sendBtn');
+        btn.innerText = "جاري الإرسال...";
+        btn.disabled = true;
+        try {
+            const params = new URLSearchParams();
+            params.append('name', name);
+            params.append('message', msg);
+            await fetch(suggURL, { method: "POST", mode: "no-cors", body: params });
+            alert("تم إرسال مقترحك بنجاح، شكراً لك!");
+            document.getElementById('suggMsg').value = "";
+            closeSugg();
+        } catch (e) { alert("حدث خطأ"); } finally { 
+            btn.innerText = "إرسال المقترح"; btn.disabled = false; 
+        }
+    }
+
+    function closeUpdate() {
+        localStorage.setItem('last_ver', localStorage.getItem('pending_ver'));
+        document.getElementById('updateModal').style.display = 'none';
+    }
+    function openSugg() { document.getElementById('suggModal').style.display = 'flex'; }
+    function closeSugg() { document.getElementById('suggModal').style.display = 'none'; }
+    function closeJobs() { document.getElementById('jobsModal').style.display = 'none'; }
+    function closeM() { document.getElementById('modal').style.display = 'none'; }
+
+    loadData();
+</script>
+</body>
+</html>
