@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة شباب إسنا الرقمية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;600;800&display=swap');
+
+        body { margin: 0; font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #1A2535 0%, #243145 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; overflow-x: hidden; }
+
+        #splash { position: fixed; inset: 0; background: #1A2535; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease; }
+        .handshake-icon { font-size: 50px; color: #C9A84C; margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.4)); }
+
+        .progress-container { width: 80%; max-width: 250px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: #C9A84C; transition: width 0.2s ease; }
+        #splash p { color: #fff; font-size: 14px; margin-top: 15px; opacity: 0.8; }
+
+        .main-container { width: 90%; max-width: 450px; text-align: center; padding: 20px 0; }
+        .header-icon { font-size: 45px; color: #C9A84C; margin-bottom: 15px; }
+        
+        h1 { font-size: 1.4rem; color: #fff; margin-bottom: 5px; }
+        .sub-title { font-size: 0.85rem; color: #a0aab8; margin-bottom: 30px; }
+        
+        .card-link { display: block; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; margin-bottom: 15px; border-radius: 20px; color: white; text-decoration: none; transition: 0.3s; backdrop-filter: blur(5px); }
+        .card-link:hover { background: #C9A84C; color: #1A2535; transform: scale(1.02); }
+        .card-link h3 { margin: 0 0 5px 0; font-size: 1.2rem; }
+        .card-link small { font-size: 0.75rem; opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <div id="splash">
+        <div class="handshake-icon"><i class="fa-solid fa-handshake-simple"></i></div>
+        <div class="progress-container">
+            <div id="progress" class="progress-bar"></div>
+        </div>
+        <p>جاري جمع البيانات</p>
+    </div>
+
+    <div class="main-container">
+        <div class="header-icon"><i class="fa-solid fa-handshake-simple"></i></div>
+        <h1>بوابة شباب إسنا الرقمية</h1>
+        <p class="sub-title">المنصة الموحدة لخدمات وتجارة مركزنا</p>
+
+        <a href="https://officialgnanoo.github.io/shababna2000/" class="card-link">
+            <h3>دليل الخدمات المهنية</h3>
+            <small>كافة الحرف المهنية لدى شباب إسنا</small>
+        </a>
+
+        <a href="https://officialgnanoo.github.io/SouqEsnaOnline/" class="card-link">
+            <h3>سوق إسنا الرقمي</h3>
+            <small>ارفع منتجك بسهولة بشكل مجاني كامل</small>
+        </a>
+    </div>
+
+    <script>
+        const progressBar = document.getElementById('progress');
+        let width = 0;
+        const interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+                document.getElementById('splash').style.opacity = '0';
+                setTimeout(() => document.getElementById('splash').style.display = 'none', 500);
+            } else {
+                width += 1.5; 
+                progressBar.style.width = width + '%';
+            }
+        }, 35);
+    </script>
+</body>
+</html>
