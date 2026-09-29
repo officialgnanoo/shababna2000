@@ -1,1 +1,1 @@
-https://officialgnanoo.github.io/shababna2000/
+https://officialgnanoo.github.io/shababna2000
